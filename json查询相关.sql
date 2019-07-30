@@ -12,7 +12,7 @@ GROUP BY
   JSON_UNQUOTE( r.xContent -> '$.router.params.merchant_id' )
   
 
--- Json聚合列
+-- Json聚合列 -- 有最大长度限制，不用这种方案
 SELECT
   -- CONCAT('[',GROUP_CONCAT(JSON_OBJECT( 'lowestDiscount', lowestDiscount )),']') AS JSON
   JSON_OBJECT( 'uid', uid,'lowestDiscount', lowestDiscount,'highestDiscount',highestDiscount ) AS JSON
