@@ -23,3 +23,17 @@ where
   and mdr.merchant_random_id = 'JUY2UOQV'
 GROUP BY
   uid
+
+-- 查询json中的某个节点是否存在
+SELECT
+  id,
+  merchant_id,
+  name,
+  take_away_specification
+FROM
+  merchants_taking_treats_rules
+WHERE
+  take_away_specification IS NOT NULL
+AND merchant_id <= 82 and merchant_id >=53
+AND JSON_CONTAINS_PATH(take_away_specification, 'one', '$[0].minimumCount') = 0
+ORDER BY merchant_id asc

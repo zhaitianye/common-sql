@@ -92,7 +92,7 @@ SELECT
   mttr.item_id as 产品的id,
   m.random_id as 商家随机id,
   mttr.name 产品名称,
-  if(mttr.take_away_specification is not null,"有规格","无规格") as 当前产品是否有规格,
+  mttr.take_away_specification as 规格,
   (SELECT i.url FROM images as i where i.target = 10 and i.target_id = mttr.id and i.valid = 1 ORDER BY i.images_id LIMIT 1) as 图片地址
 FROM
   merchants AS m,
@@ -102,3 +102,82 @@ WHERE
   and mttr.language = 'hk'
   and m.random_id = mttr.merchant_random_id
   and m.merchant_id = 83
+
+--//// 二
+SELECT DISTINCT
+  id,
+  item_id,
+  name,
+  price,
+  denomination,
+  cost,
+  take_away_service
+FROM
+  merchants_taking_treats_rules
+WHERE
+  merchant_id = 58
+  and language = 'en'
+  and valid = 1
+  
+SELECT DISTINCT
+  id,
+  item_id,
+  name,
+  price,
+  denomination,
+  cost,
+  take_away_service
+FROM
+  merchants_taking_treats_rules
+WHERE
+  merchant_id = 58
+  and language = 'hk'
+  and valid = 1
+
+
+-- 把一个表的数据查询出来插入另外一个表
+INSERT INTO images (target,target_id,url,sequence,valid)
+SELECT
+  (10) as target,
+  mttr.id as target_id,
+  CONCAT('https://images.usinno.cn/000_merchant_product_image/houhaixiaoqu/huangshulangjibao/',mttr.img_url_temp) as url,
+  (1) as sequence,
+  (1) as valid
+FROM
+  merchants_taking_treats_rules as mttr
+WHERE
+  merchant_id = 95
+
+
+-- 查询并更新一个商家的所有产品的规格
+-- 用notlike去过滤看有多少种规格
+-- 用update去逐条更新规则
+SELECT
+  mttr.id,
+  mttr.merchant_id,
+  mttr.take_away_specification
+FROM
+  merchants_taking_treats_rules  as mttr
+WHERE
+  mttr.merchant_id = 47
+
+AND mttr.take_away_specification NOT like '[{"name": "温度", "isFees": false, "children": [{"name": "正常冰", "active": true}, {"name": "少冰"}, {"name": "热"}], "minimumCount": 1, "multipleCount": 1}, {"name": "甜度", "isFees": false, "children": [{"name": "正常糖", "active": true}, {"name": "少糖", "active": true}], "minimumCount": 1, "multipleCount": 1}]'
+
+-- 查询一个商家下面的所有不重复的规格
+SELECT 
+  DISTINCT
+  mttr.take_away_specification,
+  mttr.merchant_id
+FROM
+  merchants_taking_treats_rules  as mttr
+WHERE
+  mttr.merchant_id = 69
+
+
+-- 更新一个商家下的一个指定的规格
+UPDATE merchants_taking_treats_rules 
+SET 
+  take_away_specification = ''
+WHERE 
+  merchant_id = 47
+AND mttr.take_away_specification like '[{"name": "温度", "isFees": false, "children": [{"name": "正常冰", "active": true}, {"name": "少冰"}, {"name": "热"}], "minimumCount": 1, "multipleCount": 1}, {"name": "甜度", "isFees": false, "children": [{"name": "正常糖", "active": true}, {"name": "少糖", "active": true}], "minimumCount": 1, "multipleCount": 1}]'
