@@ -181,3 +181,97 @@ SET
 WHERE 
   merchant_id = 47
 AND mttr.take_away_specification like '[{"name": "温度", "isFees": false, "children": [{"name": "正常冰", "active": true}, {"name": "少冰"}, {"name": "热"}], "minimumCount": 1, "multipleCount": 1}, {"name": "甜度", "isFees": false, "children": [{"name": "正常糖", "active": true}, {"name": "少糖", "active": true}], "minimumCount": 1, "multipleCount": 1}]'
+
+
+-- 查询商家商户的绑定情况
+SELECT
+  u.user_id as '用户ID',
+  u.merchant_id as '商家ID',
+  m.name as '商家名称',
+  u.firstname as '用户名称',
+  IF((u.wechat_id is null or u.wechat_id = ''),'不拥有','拥有') as 是否拥有微信ID,
+  IF(u.wechat_oc_id is not null,'拥有','不拥有') as 是否拥有微信公众号ID,
+  IF(u.wechat_union_id is not null,'拥有','不拥有') as 是否拥有微信全平台ID,
+  IF(u.wechat_binded = 1,'已绑定','未绑定') as 是否绑定了微信
+FROM
+  users as u,
+  merchants as m
+WHERE
+  m.merchant_id = u.merchant_id
+  and m.language = 'hk'
+and
+  u.type = 2 
+ORDER BY
+  商家ID
+
+
+-- 二维码相关的- 查询所有没有使用的公众号二维码
+SELECT
+  * 
+FROM
+  qrcode_recording as qr
+WHERE 
+  qr.nType = 2
+  AND qr.nStatus = 0
+
+-- 查询所有一些没有使用的公众号二维码
+SELECT
+  qr.nid,
+  qr.sFunction,
+  qr.sNameCh,
+  qr.merchant_id,
+  qr.merchant_random_id,
+  qr.nStatus,
+  qr.vDesc,
+  qr.url
+FROM
+  qrcode_recording as qr
+WHERE 
+  qr.nType = 2
+  AND qr.nStatus = 0
+  Limit 50
+
+-- 查询我们服务的所有商家
+SELECT 
+  *
+FROM
+  merchants as m
+WHERE
+  m.language = 'hk'
+  and m.merchant_id >44
+
+-- 查询可以导出到excel的二维码数据
+SELECT 
+  qr.nid as 二维码识别ID,
+  CASE qr.sFunction WHEN 'watery' THEN '水牌' WHEN 'poster' THEN '海报' ELSE '未知' END as 二维码类型,
+  qr.sNameCh as 商家名称,
+  qr.vDesc AS 二维码状态,
+  qr.url as 二维码地址,
+  m.logo_url as 商家LOGO图片地址
+FROM
+  merchants as m,
+  qrcode_recording as qr
+WHERE
+  m.language = 'hk'
+  and m.merchant_id >44
+  and m.random_id = qr.merchant_random_id
+  and qr.nStatus = 1
+  and qr.sFunction = 'poster'
+
+-- 爆品相关的查询
+SELECT
+  mttr.id,
+  mttr.item_id,
+  mttr.name,
+  mttr.price,
+  mttr.denomination,
+  mttr.cost,
+  mttr.isTop,
+  mttr.isHotSale,
+  mttr.take_away_service,
+  mttr.xTag,
+  mttr.weight
+FROM
+  merchants_taking_treats_rules as mttr
+WHERE 
+    mttr.merchant_id = 72

@@ -29,3 +29,15 @@ where
   and mdr.merchant_random_id = 'JUY2UOQV'
 GROUP BY
   uid
+
+-- 聚合查询两个点之间的距离，以距离的远近排序
+-- HAVING语句通常与GROUP BY语句联合使用，用来过滤由GROUP BY语句返回的记录集。
+-- HAVING语句的存在弥补了WHERE关键字不能与聚合函数联合使用的不足。
+SELECT
+  s.uid,
+  s.centroid_lng,
+  s.centroid_lat,
+  (ST_Distance_Sphere (point (centroid_lng, centroid_lat),point(113.94091300,22.53333700) )) AS distance
+from distribution_point as s
+HAVING distance<3000
+ORDER BY distance
