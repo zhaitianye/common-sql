@@ -275,3 +275,18 @@ FROM
   merchants_taking_treats_rules as mttr
 WHERE 
     mttr.merchant_id = 72
+
+-- 给一个商户生成商家登录账户
+-- provider_id 查询用户表，手动加1，random_id 用下面生成,其他数据使用最新的
+-- Date.now().toString(36).toUpperCase();
+INSERT INTO 
+  users 
+SET type=2, 
+    provider_id=182, 
+    merchant_id=100, 
+    random_id='JZWBKUVB', 
+    firstname = '鼎厨', 
+    profile_url='https://images.usinno.cn/1566552257622_tkar.jpg', 
+    phone_country_code='86', 
+    phone_number='15999678365', 
+    password='8365';
