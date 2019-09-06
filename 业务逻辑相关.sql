@@ -111,11 +111,12 @@ SELECT DISTINCT
   price,
   denomination,
   cost,
-  take_away_service
+  take_away_service,
+  img_url_temp
 FROM
   merchants_taking_treats_rules
 WHERE
-  merchant_id = 58
+  merchant_id = 114
   and language = 'en'
   and valid = 1
   
@@ -126,17 +127,18 @@ SELECT DISTINCT
   price,
   denomination,
   cost,
-  take_away_service
+  take_away_service,
+  img_url_temp
 FROM
   merchants_taking_treats_rules
 WHERE
-  merchant_id = 58
+  merchant_id = 114
   and language = 'hk'
   and valid = 1
 
 
--- 把一个表的数据查询出来插入另外一个表
-INSERT INTO images (target,target_id,url,sequence,valid)
+-- 把一个表的数据查询出来插入另外一个表，先select看是否可用，可用之后#号去掉插入
+# INSERT INTO images (target,target_id,url,sequence,valid)
 SELECT
   (10) as target,
   mttr.id as target_id,
@@ -277,6 +279,7 @@ WHERE
     mttr.merchant_id = 72
 
 -- 给一个商户生成商家登录账户
+-- SELECT * FROM users where type =2 ORDER BY provider_id desc
 -- provider_id 查询用户表，手动加1，random_id 用下面生成,其他数据使用最新的
 -- Date.now().toString(36).toUpperCase();
 INSERT INTO 
@@ -290,3 +293,8 @@ SET type=2,
     phone_country_code='86', 
     phone_number='15999678365', 
     password='8365';
+
+-- 修改前台显示商品说明文案的换行的问题
+UPDATE merchants_taking_treats_rules 
+SET usage_notes = '1. 仅限到店兑换使用。 \n2. 可兑换店里同价位产品，高于此面值产品需补差价。 \n3. 此礼品券不支持找零或折现。'
+WHERE id in (3741,3742,3743,3744,3745,3746,3747,3748,3749,3750,3751,3752,3753,3754,3755,3756,3757,3758,3759,3760,3761,3762,3763,3764,3765,3766,3767,3768,3769,3770,3771,3772,3773,3774,3775,3776,3777,3778,3779,3780,3781,3782,3783,3784,3785,3786,3787,3788,3789,3790,3791,3792,3793,3794,3795,3796,3797,3798,3799,3800,3801,3802,3803,3804,3805,3806,3807,3808,3809,3810,3811,3812,3813,3814,3815,3816,3817,3818,3819,3820,3821,3822,3823,3824,3825,3826,3827,3828,3829,3830,3831,3832,3833,3834,3835,3836,3837,3838,3839,3840,3841,3842,3843,3844,3845,3846,3847,3848,3849,3850,3851,3852,3853,3854,3855,3856,3857,3858,3859,3860,3861,3862,3863,3864)
