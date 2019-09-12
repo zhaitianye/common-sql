@@ -175,6 +175,26 @@ FROM
 WHERE
   mttr.merchant_id = 69
 
+-- 查询商家下面的不同规格的产品
+SELECT
+  mttr.id,
+  mttr.item_id,
+  mttr.name,
+  valid
+FROM
+  merchants_taking_treats_rules  as mttr 
+WHERE
+  merchant_id = 68
+  AND mttr.take_away_specification LIKE (
+  SELECT DISTINCT
+    mttr.take_away_specification 
+  FROM
+    merchants_taking_treats_rules AS mttr 
+  WHERE
+    mttr.merchant_id = 68 
+  LIMIT 4,
+  1)
+  and language = 'hk'
 
 -- 更新一个商家下的一个指定的规格
 UPDATE merchants_taking_treats_rules 
@@ -231,7 +251,7 @@ FROM
 WHERE 
   qr.nType = 2
   AND qr.nStatus = 0
-  Limit 50
+  Limit 2
 
 -- 查询我们服务的所有商家
 SELECT 
@@ -243,22 +263,21 @@ WHERE
   and m.merchant_id >44
 
 -- 查询可以导出到excel的二维码数据
-SELECT 
-  qr.nid as 二维码识别ID,
-  CASE qr.sFunction WHEN 'watery' THEN '水牌' WHEN 'poster' THEN '海报' ELSE '未知' END as 二维码类型,
-  qr.sNameCh as 商家名称,
-  qr.vDesc AS 二维码状态,
-  qr.url as 二维码地址,
-  m.logo_url as 商家LOGO图片地址
+SELECT
+  qr.nid,
+  qr.sFunction,
+  qr.sNameCh,
+  qr.merchant_id,
+  qr.merchant_random_id,
+  qr.nStatus,
+  qr.vDesc,
+  qr.url
 FROM
-  merchants as m,
   qrcode_recording as qr
-WHERE
-  m.language = 'hk'
-  and m.merchant_id >44
-  and m.random_id = qr.merchant_random_id
-  and qr.nStatus = 1
-  and qr.sFunction = 'poster'
+WHERE 
+  qr.nType = 2
+  AND qr.nStatus = 0
+  Limit 30
 
 -- 爆品相关的查询
 SELECT
@@ -326,3 +345,17 @@ FROM
 WHERE
   merchant_id = 125
   and language = 'en'
+
+
+#慎用，调试用
+#删除本机服务器上除了自己的其他人的微信id，调试用
+UPDATE users 
+SET wechat_id = NULL,
+wechat_id = NULL,
+wechat_oc_id = NULL,
+wechat_oc_subscribed = NULL,
+wechat_oc_subscribe_source = NULL,
+wechat_oc_subscribe_time = NULL 
+WHERE
+  user_id NOT IN (
+  623)
