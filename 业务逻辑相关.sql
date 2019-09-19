@@ -263,21 +263,22 @@ WHERE
   and m.merchant_id >44
 
 -- 查询可以导出到excel的二维码数据
-SELECT
-  qr.nid,
-  qr.sFunction,
-  qr.sNameCh,
-  qr.merchant_id,
-  qr.merchant_random_id,
-  qr.nStatus,
-  qr.vDesc,
-  qr.url
+SELECT 
+  qr.nid as 二维码识别ID,
+  CASE qr.sFunction WHEN 'watery' THEN '水牌' WHEN 'poster' THEN '海报' ELSE '未知' END as 二维码类型,
+  qr.sNameCh as 商家名称,
+  qr.vDesc AS 二维码状态,
+  qr.url as 二维码地址,
+  m.logo_url as 商家LOGO图片地址
 FROM
+  merchants as m,
   qrcode_recording as qr
-WHERE 
-  qr.nType = 2
-  AND qr.nStatus = 0
-  Limit 30
+WHERE
+  m.language = 'hk'
+  and m.merchant_id >44
+  and m.random_id = qr.merchant_random_id
+  and qr.nStatus = 1
+  and qr.sFunction = 'poster'
 
 -- 爆品相关的查询
 SELECT

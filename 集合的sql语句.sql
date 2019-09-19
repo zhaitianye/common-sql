@@ -494,3 +494,26 @@ where
 GROUP BY
   uid
 
+
+-- 查询用户在南区的收货地址表
+SELECT
+  *
+FROM
+  receiving_addresses as r
+WHERE
+  JSON_UNQUOTE( r.xContent -> '$.receivingArea.uid' ) in ("ADFB5C9B-A329-4408-969A-488E4BA178DD","049A5C28-0063-4323-9835-1ECEADA7090C","9058197E-3207-46F6-BBCA-A553FACB1967","5B6E63B9-45C7-4048-A118-49B8FA6CB8F9")
+
+-- 查询商家商品相关的
+SELECT
+  id,
+  name,
+  price,
+  denomination,
+  cost,
+  isHotSale,
+  weight,
+  xTag
+FROM
+  merchants_taking_treats_rules 
+WHERE
+  merchant_id = 46
